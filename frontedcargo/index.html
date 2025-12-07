@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cаrgo — Доставка по России</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="theme-toggle" onclick="toggleTheme()">Moon</div>
+    <div class="container">
+        <h1>CArgo</h1>
+        <p class="subtitle">Агрегатор доставки по 50 крупнейшим городам России</p>
+
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+
+        <form method="post" action="/calc">
+            <label>Откуда</label>
+            <select name="from_city" required>
+                {% for city in cities %}
+                    <option value="{{ city.title() }}" {% if city.title() == from_city %}selected{% endif %}>{{ city.title() }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Куда</label>
+            <select name="to_city" required>
+                {% for city in cities %}
+                    <option value="{{ city.title() }}" {% if city.title() == to_city %}selected{% endif %}>{{ city.title() }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Вес (целое число, кг)</label>
+            <input type="number" name="weight" value="{{ weight or 1 }}" min="1" step="1" required>
+
+            <label>Размер коробки</label>
+            <select name="box_size" required onchange="document.getElementById('boxHint').textContent = this.selectedOptions[0].dataset.hint">
+                {% for k, v in boxes.items() %}
+                    <option value="{{ k }}" data-hint="{{ v.hint }}" {% if k == box_size %}selected{% endif %}>
+                        {{ k }} — {{ v.name }} ({{ v.hint }})
+                    </option>
+                {% endfor %}
+            </select>
+            <div class="hint" id="boxHint">{{ boxes[box_size or 'S'].hint }}</div>
+
+            <button type="submit">Рассчитать доставку</button>
+        </form>
+
+        {% if offers %}
+            <div class="result">
+                <h2>Лучшие предложения</h2>
+                {% for company, tariff, price, time in offers %}
+                    <div class="offer">
+                        <strong>{{ company }} — {{ tariff }}</strong><br>
+                        <span class="price">{{ price }} ₽</span> • {{ time }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    <script src="/static/script.js"></script>
+    <script>
+        document.querySelector('[name="box_size"]').dispatchEvent(new Event('change'));
+    </script>
+</body>
+</html>
