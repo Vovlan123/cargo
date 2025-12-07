@@ -25,8 +25,9 @@ data class Order(
 
 // Простое хранилище заказов в памяти приложения
 object DataRepository {
-    val orders = mutableListOf<Order>()
+    val orders: MutableList<Order> = mutableListOf()
 }
+
 
 // Стратегии сортировки / фильтрации
 enum class FilterStrategy {

@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var showAllButton: Button
     private lateinit var newOrderButton: Button
 
-    // Карточка последнего (активного) заказа
+    // Карточка последнего заказа (остров)
     private lateinit var lastOrderCard: LinearLayout
     private lateinit var lastOrderCompany: TextView
     private lateinit var lastOrderCargoType: TextView
@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var lastOrderTariffType: TextView
     private lateinit var lastOrderAskButton: Button
 
-    // Нижняя часть острова (кнопки при развороте)
+    // НИЖНЯЯ ЧАСТЬ ОСТРОВА (кнопки при развороте)
     private lateinit var orderActionsContainer: LinearLayout
     private lateinit var completeOrderButton: Button
     private lateinit var openSiteButton: Button
@@ -74,8 +74,8 @@ class MainActivity : AppCompatActivity() {
         // Обработка аппаратной кнопки "Назад"
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                finish()
                 noActivityTransition()
+                finish()
             }
         })
 
@@ -84,19 +84,19 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, AllOrdersActivity::class.java))
         }
 
-        // Кнопка "Новый заказ" (фикс двойных нажатий)
+        // Кнопка "Новый заказ" с защитой от двойного открытия
         newOrderButton.setOnClickListener {
-            if (isNewOrderOpening) return@setOnClickListener
-
+            if (isNewOrderOpening) {
+                return@setOnClickListener
+            }
             isNewOrderOpening = true
             startActivity(Intent(this, NewOrderActivity::class.java))
         }
 
-        // Клик по карточке последнего (активного) заказа
+        // Клик по карточке последнего заказа -> разворачиваем/сворачиваем
         lastOrderCard.setOnClickListener {
-            val order = getActiveOrder()
-            if (order == null) {
-                Toast.makeText(this, "Пока нет активных заказов", Toast.LENGTH_SHORT).show()
+            if (DataRepository.orders.isEmpty()) {
+                Toast.makeText(this, "Пока нет заказов", Toast.LENGTH_SHORT).show()
             } else {
                 toggleOrderExpanded()
             }
@@ -104,12 +104,11 @@ class MainActivity : AppCompatActivity() {
 
         // Кнопка "Задать вопрос"
         lastOrderAskButton.setOnClickListener {
-            val order = getActiveOrder()
-            if (order == null) {
-                Toast.makeText(this, "Пока нет активных заказов", Toast.LENGTH_SHORT).show()
+            if (DataRepository.orders.isEmpty()) {
+                Toast.makeText(this, "Пока нет заказов", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-
+            val order = DataRepository.orders.first()
             val tariff = order.tariff
             val message = "Вопрос по заказу:\n" +
                     "${tariff.company}, ${tariff.tariffType}\n" +
@@ -124,11 +123,12 @@ class MainActivity : AppCompatActivity() {
 
         // Кнопка "Завершить заказ"
         completeOrderButton.setOnClickListener {
-            val order = getActiveOrder()
-            if (order == null) {
-                Toast.makeText(this, "Пока нет активных заказов", Toast.LENGTH_SHORT).show()
+            if (DataRepository.orders.isEmpty()) {
+                Toast.makeText(this, "Пока нет заказов", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
+            val order = DataRepository.orders.first()
 
             if (!order.isFinished) {
                 order.isFinished = true
@@ -137,10 +137,8 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Этот заказ уже завершён", Toast.LENGTH_SHORT).show()
             }
 
-            // Сворачиваем карточку и обновляем "последний заказ" — он исчезнет,
-            // если это был единственный активный заказ
+            // Сворачиваем карточку
             collapseOrderDetails()
-            updateLastOrder()
 
             // Открываем экран истории
             startActivity(Intent(this, HistoryActivity::class.java))
@@ -148,12 +146,11 @@ class MainActivity : AppCompatActivity() {
 
         // Кнопка "Перейти на сайт"
         openSiteButton.setOnClickListener {
-            val order = getActiveOrder()
-            if (order == null) {
-                Toast.makeText(this, "Пока нет активных заказов", Toast.LENGTH_SHORT).show()
+            if (DataRepository.orders.isEmpty()) {
+                Toast.makeText(this, "Пока нет заказов", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-
+            val order = DataRepository.orders.first()
             val companyName = order.tariff.company
             val query = Uri.encode(companyName)
             val url = "https://www.google.com/search?q=$query"
@@ -169,7 +166,7 @@ class MainActivity : AppCompatActivity() {
         // Нижняя панель навигации
         tabHistory.setOnClickListener {
             startActivity(Intent(this, HistoryActivity::class.java))
-            noActivityTransition()
+            overridePendingTransition(0, 0)
             finish()
         }
 
@@ -187,35 +184,38 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        // Как только MainActivity снова становится активной,
-        // разрешаем снова открывать "Новый заказ"
+        // Разрешаем повторно открывать NewOrderActivity
         isNewOrderOpening = false
 
+        // Загружаем заказы из локальной БД в память
+        loadOrdersFromDb()
+
+        // Обновляем UI
         updateLastOrder()
         collapseOrderDetails()
     }
 
     /**
-     * Возвращает первый активный (НЕ завершённый) заказ
+     * Чтение заказов из SQLite в DataRepository.orders
      */
-    private fun getActiveOrder() =
-        DataRepository.orders.firstOrNull { !it.isFinished }
+    private fun loadOrdersFromDb() {
+        val dbHelper = OrdersDbHelper(this)
+        val ordersFromDb = dbHelper.getAllOrders()
 
-    /**
-     * Обновление отображения "последнего" (активного) заказа на главном экране
-     */
+        DataRepository.orders.clear()
+        DataRepository.orders.addAll(ordersFromDb)
+    }
+
     private fun updateLastOrder() {
-        val order = getActiveOrder()
-
-        if (order == null) {
-            // Нет активных заказов — показываем заглушку
-            lastOrderCompany.text = "Пока нет активных заказов"
+        if (DataRepository.orders.isEmpty()) {
+            lastOrderCompany.text = "Пока нет заказов"
             lastOrderCargoType.text = ""
             lastOrderTime.text = ""
             lastOrderPrice.text = ""
             lastOrderTariffType.text = ""
             lastOrderAskButton.visibility = View.GONE
         } else {
+            val order = DataRepository.orders.first()
             val tariff = order.tariff
             lastOrderCompany.text = tariff.company
             lastOrderCargoType.text = "Тип груза: ${tariff.cargoType}"
@@ -240,12 +240,5 @@ class MainActivity : AppCompatActivity() {
         orderActionsContainer.visibility = View.GONE
         showAllButton.visibility = View.VISIBLE
         isOrderExpanded = false
-    }
-
-    /**
-     * Отключение анимации перехода между Activity
-     */
-    private fun noActivityTransition() {
-        overridePendingTransition(0, 0)
     }
 }

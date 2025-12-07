@@ -23,7 +23,8 @@ data class TariffsResponseDto(
 )
 
 data class TariffsRequestDto(
-    @SerializedName("city") val city: String,
-    @SerializedName("weight") val weight: Double,
-    @SerializedName("strategy") val strategy: String = "none"
+    val fromCity: String,   // город отправления
+    val city: String,       // город назначения
+    val weight: Double,     // вес в кг
+    val strategy: String    // стратегия сортировки
 )

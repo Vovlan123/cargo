@@ -18,8 +18,8 @@ import java.io.IOException
 class TariffsActivity : AppCompatActivity() {
 
     private val BASE_URL = "http://127.0.0.1:8000"
-    // Если сервер на ПК, а запускаешь с эмулятора Android Studio,
-    // лучше использовать: private val BASE_URL = "http://10.0.2.2:8000"
+    // Если сервер на ПК, а запускаешь с эмулятора:
+    // private val BASE_URL = "http://10.0.2.2:8000"
 
     private val httpClient = OkHttpClient()
     private val gson = Gson()
@@ -181,14 +181,13 @@ class TariffsActivity : AppCompatActivity() {
     private fun loadTariffsFromServer() {
         val url = "$BASE_URL/api/tariffs"
 
-        // Отправляем и fromCity, и city, и weight, и strategy
+        // ВАЖНО: используем TariffsRequestDto из NetworkModels.kt
         val requestDto = TariffsRequestDto(
             fromCity = fromCity,
             city = city,
             weight = weightKg,
             strategy = "none"
         )
-
         val jsonBody = gson.toJson(requestDto)
         val mediaType = "application/json; charset=utf-8".toMediaType()
         val requestBody = jsonBody.toRequestBody(mediaType)
@@ -381,10 +380,8 @@ class TariffsActivity : AppCompatActivity() {
 
             // "Выбрать тариф" -> сохраняем в БД, затем в память и идём на главную
             selectTariffButton.setOnClickListener {
-                // 1. Размер по весу
                 val size = getSizeByWeight(weightKg)
 
-                // 2. Нормализуем тип доставки под CHECK в БД
                 val normalizedDeliveryType = when {
                     tariff.tariffType.contains("экспресс", ignoreCase = true) ->
                         "экспресс лайт"
@@ -397,7 +394,6 @@ class TariffsActivity : AppCompatActivity() {
                         "посылочка (Эконом)"
                 }
 
-                // 3. Сохраняем заказ в SQLite
                 val dbHelper = OrdersDbHelper(this)
                 val dbId = try {
                     dbHelper.insertOrder(
@@ -428,7 +424,6 @@ class TariffsActivity : AppCompatActivity() {
                     return@setOnClickListener
                 }
 
-                // 4. Добавляем заказ в память
                 val order = Order(
                     city = city,
                     weightKg = weightKg,
@@ -437,7 +432,6 @@ class TariffsActivity : AppCompatActivity() {
                 )
                 DataRepository.orders.add(0, order)
 
-                // 5. Сообщаем пользователю и переходим на главную
                 Toast.makeText(
                     this,
                     "Тариф добавлен в заказы",
@@ -465,7 +459,6 @@ class TariffsActivity : AppCompatActivity() {
         }
     }
 
-    // Маппер размера по весу
     private fun getSizeByWeight(weightKg: Double): String = when {
         weightKg <= 0.5 -> "XS"
         weightKg <= 2.0 -> "S"
