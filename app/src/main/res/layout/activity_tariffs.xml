@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F7FB">
+
+    <!-- Состояние загрузки -->
+    <LinearLayout
+        android:id="@+id/loadingLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Delivio"
+            android:textSize="32sp"
+            android:textStyle="bold" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp" />
+    </LinearLayout>
+
+    <!-- Состояние с тарифами -->
+    <LinearLayout
+        android:id="@+id/contentLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:fitsSystemWindows="true"
+        android:paddingTop="16dp"
+        android:visibility="gone">
+
+        <!-- Шапка: город + вес + фильтр -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="0dp">
+
+            <!-- Островок город/вес (поменьше по высоте) -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:background="@drawable/tariffs_header_pill"
+                android:layout_marginLeft="9dp"
+                android:layout_marginRight="8dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/cityText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Город"
+                    android:textSize="16sp"
+                    android:textColor="#000000" />
+
+                <TextView
+                    android:id="@+id/weightText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Вес"
+                    android:textSize="16sp"
+                    android:textColor="#000000"
+                    android:gravity="end" />
+            </LinearLayout>
+
+            <!-- Кнопка фильтра (поменьше по высоте) -->
+            <Button
+                android:id="@+id/filterButton"
+                android:layout_width="78dp"
+                android:layout_height="52dp"
+                android:layout_marginRight="8dp"
+                android:background="@drawable/tariffs_filter_pill_ripple"
+                app:backgroundTint="@null"
+                android:drawableTop="@drawable/ic_filter"
+                android:text=""
+                android:contentDescription="Фильтр" />
+        </LinearLayout>
+
+        <!-- Островок средней стоимости (поменьше по высоте) -->
+        <TextView
+            android:id="@+id/avgPriceText"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:text="Средняя стоимость:"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="9dp"
+            android:layout_marginRight="9dp"
+            android:background="@drawable/tariffs_metric_pill"
+            android:textColor="#000000"
+            android:gravity="center_vertical"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp" />
+
+        <!-- Островок среднего времени (поменьше по высоте) -->
+        <TextView
+            android:id="@+id/avgTimeText"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:text="Среднее время:"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="9dp"
+            android:layout_marginRight="9dp"
+            android:background="@drawable/tariffs_metric_pill"
+            android:textColor="#000000"
+            android:gravity="center_vertical"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp" />
+
+        <!-- Текст "Фильтр" по центру горизонтали -->
+        <TextView
+            android:id="@+id/strategyText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Фильтр"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp"
+            android:textColor="#000000"
+            android:gravity="center_horizontal" />
+
+        <!-- Список тарифов -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="12dp">
+
+            <LinearLayout
+                android:id="@+id/tariffsContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+        </ScrollView>
+
+        <!-- Кнопка 'Изменить данные' -->
+        <Button
+            android:id="@+id/changeDataButton"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:text="Изменить данные"
+            android:textSize="18sp"
+            android:textColor="#101010"
+            android:background="@drawable/tariffs_change_data_button_ripple"
+            app:backgroundTint="@null"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="25dp"
+            android:layout_marginRight="25dp" />
+
+        <!-- НИЖНЯЯ ПАНЕЛЬ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginLeft="25dp"
+            android:layout_marginRight="25dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center">
+
+            <LinearLayout
+                android:id="@+id/bottomNav"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:background="@drawable/rounded_bottom_nav"
+                android:padding="4dp">
+
+                <!-- History -->
+                <LinearLayout
+                    android:id="@+id/tabHistory"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@drawable/bottom_nav_item_inactive_ripple"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_history" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="History"
+                        android:textSize="10sp"
+                        android:textColor="#555555"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <!-- Home -->
+                <LinearLayout
+                    android:id="@+id/tabHome"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@drawable/bottom_nav_item_active_ripple"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_home"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Home"
+                        android:textSize="20sp"
+                        android:textColor="#025AE7"
+                        android:textStyle="bold"
+                        android:gravity="center" />
+                </LinearLayout>
+
+                <!-- Feedback -->
+                <LinearLayout
+                    android:id="@+id/tabFeedback"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@drawable/bottom_nav_item_inactive_ripple"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_feedback" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Feedback"
+                        android:textSize="10sp"
+                        android:textColor="#555555"
+                        android:visibility="gone" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Состояние "ничего не найдено" -->
+    <LinearLayout
+        android:id="@+id/emptyLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="16dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ничего не найдено\nПопробуйте изменить вес"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:textColor="#777777" />
+
+        <ImageView
+            android:id="@+id/ufoImage"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginTop="16dp"
+            android:src="@drawable/ic_ufo" />
+    </LinearLayout>
+
+</FrameLayout>

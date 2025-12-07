@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F5F7FB"
+    android:padding="16dp"
+    android:fitsSystemWindows="true"
+    android:paddingTop="16dp">
+
+    <!-- Заголовок + кнопка фильтра -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/titleText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="30dp"
+            android:text="История заказов"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:textColor="#000000" />
+
+        <ImageButton
+            android:id="@+id/filterButton"
+            android:layout_width="78dp"
+            android:layout_height="61dp"
+            android:background="@drawable/filter_button_background_ripple"
+            app:backgroundTint="@null"
+            android:src="@drawable/ic_filter"
+            android:scaleType="centerInside"
+            android:adjustViewBounds="true"
+            android:padding="8dp"
+            android:contentDescription="Фильтр" />
+    </LinearLayout>
+
+    <!-- Голубая линия под заголовком -->
+    <View
+        android:id="@+id/historyHeaderLine"
+        android:layout_width="269dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="30dp"
+        android:background="#6ED1FF" />
+
+    <!-- Список заказов -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="16dp">
+
+        <LinearLayout
+            android:id="@+id/ordersContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </ScrollView>
+
+    <!-- НИЖНЯЯ ПАНЕЛЬ (History, активен History) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center">
+
+        <LinearLayout
+            android:id="@+id/bottomNav"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:background="@drawable/rounded_bottom_nav"
+            android:padding="4dp">
+
+            <!-- History (АКТИВНА: только текст + таблетка) -->
+            <LinearLayout
+                android:id="@+id/tabHistory"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/bottom_nav_item_active_ripple"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_history"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="History"
+                    android:textSize="20sp"
+                    android:textColor="#025AE7"
+                    android:textStyle="bold"
+                    android:gravity="center" />
+            </LinearLayout>
+
+            <!-- Home (НЕ активна: только иконка) -->
+            <LinearLayout
+                android:id="@+id/tabHome"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/bottom_nav_item_inactive_ripple"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_home" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Home"
+                    android:textSize="10sp"
+                    android:textColor="#555555"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <!-- Feedback (НЕ активна: только иконка) -->
+            <LinearLayout
+                android:id="@+id/tabFeedback"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/bottom_nav_item_inactive_ripple"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_feedback" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Feedback"
+                    android:textSize="10sp"
+                    android:textColor="#555555"
+                    android:visibility="gone" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#80000000"
+    android:gravity="center">
+
+    <!-- Белая карточка-диалог -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:orientation="vertical"
+        android:background="@drawable/new_order_card_background">
+
+        <!-- Заголовок -->
+        <TextView
+            android:id="@+id/titleText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Заказ"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:textColor="#000000"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Внутренняя карточка с данными заказа -->
+        <LinearLayout
+            android:id="@+id/orderCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/rounded_card_background">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingRight="8dp">
+
+                <!-- Левая часть: текст -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/orderCompanyText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Компания"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:id="@+id/orderRouteText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Москва → Город, вес X кг"
+                        android:layout_marginTop="2dp" />
+
+                    <TextView
+                        android:id="@+id/orderTariffText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Тип тарифа"
+                        android:layout_marginTop="2dp" />
+
+                    <TextView
+                        android:id="@+id/orderTimeText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Время в пути"
+                        android:layout_marginTop="4dp" />
+
+                    <TextView
+                        android:id="@+id/orderPriceText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Стоимость"
+                        android:layout_marginTop="6dp" />
+
+                    <!-- Короткий текст: Прогноз / От перевозчика -->
+                    <TextView
+                        android:id="@+id/orderSourceTypeText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Прогноз"
+                        android:textSize="12sp"
+                        android:textColor="#555555"
+                        android:layout_marginTop="2dp" />
+
+                    <!-- Поясняющая плашка -->
+                    <TextView
+                        android:id="@+id/orderSourceText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Это цена спрогнозирована моделью"
+                        android:textSize="12sp"
+                        android:textColor="#000000"
+                        android:background="@drawable/source_pill_background"
+                        android:layout_marginTop="4dp" />
+
+                    <!-- Статус -->
+                    <TextView
+                        android:id="@+id/orderStatusText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Статус: активен"
+                        android:layout_marginTop="6dp"
+                        android:textColor="#000000" />
+                </LinearLayout>
+
+                <!-- Правая часть можно оставить пустой (по макету там небольшие кнопки) -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <!-- Здесь при желании можно добавить кнопку 'Задать вопрос' -->
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Кнопка 'Перейти на сайт' (голубая) -->
+        <Button
+            android:id="@+id/openSiteButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Перейти на сайт"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:background="@drawable/blue_button_background"
+            android:layout_marginTop="16dp" />
+
+        <!-- Кнопка 'Заказ завершён' (с голубой обводкой) -->
+        <Button
+            android:id="@+id/finishOrderButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Заказ завершён"
+            android:textColor="#00AEEF"
+            android:textSize="16sp"
+            android:background="@drawable/blue_outline_button_background"
+            android:layout_marginTop="8dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

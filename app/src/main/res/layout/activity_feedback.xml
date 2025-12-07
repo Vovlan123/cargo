@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/feedbackRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F5F7FB"
+    android:padding="16dp"
+    android:fitsSystemWindows="true"
+    android:paddingTop="16dp">
+
+    <!-- Заголовок "Поддержка" -->
+    <TextView
+        android:id="@+id/titleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="26dp"
+        android:text="Поддержка"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:textColor="#000000" />
+
+    <!-- Подзаголовок, по центру, серый текст -->
+    <TextView
+        android:id="@+id/descriptionText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="16dp"
+        android:text="Здесь вы можете задать вопрос\nили оставить отзыв"
+        android:textSize="16sp"
+        android:textColor="#676767"
+        android:gravity="center"
+        android:textAlignment="center" />
+
+    <!-- Большая плашка 'Спасибо за обратную связь' (скрыта, пока нет сообщений) -->
+    <TextView
+        android:id="@+id/thanksText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:padding="16dp"
+        android:text="Спасибо за обратную связь"
+        android:textSize="18sp"
+        android:textColor="#000000"
+        android:background="@drawable/rounded_card_background"
+        android:gravity="center"
+        android:visibility="gone" />
+
+    <!-- Список сообщений (облачка) -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="16dp">
+
+        <LinearLayout
+            android:id="@+id/messagesContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </ScrollView>
+
+    <!-- Нижний остров для ввода сообщения -->
+    <LinearLayout
+        android:id="@+id/inputRow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="61dp"
+        android:layout_marginStart="26dp"
+        android:layout_marginEnd="26dp"
+        android:layout_marginBottom="4dp"
+        android:orientation="horizontal"
+        android:background="@drawable/feedback_input_background"
+        android:paddingStart="16dp"
+        android:paddingEnd="8dp"
+        android:gravity="center_vertical">
+
+        <EditText
+            android:id="@+id/messageInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Сообщение"
+            android:background="@android:color/transparent"
+            android:textColor="#000000"
+            android:textColorHint="#777777"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:inputType="textMultiLine"
+            android:minLines="1"
+            android:maxLines="5"
+            android:gravity="top|start"
+            android:scrollbars="vertical"
+            android:overScrollMode="ifContentScrolls" />
+
+        <!-- Кнопка с PNG справа -->
+        <ImageButton
+            android:id="@+id/sendButton"
+            android:layout_width="52dp"
+            android:layout_height="47dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/feedback_send_button_background_ripple"
+            app:backgroundTint="@null"
+            android:src="@drawable/ic_frame"
+            android:scaleType="centerInside"
+            android:padding="6dp"
+            android:contentDescription="Отправить" />
+    </LinearLayout>
+
+    <!-- НИЖНЯЯ ПАНЕЛЬ (Feedback, активен Feedback) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center">
+
+        <LinearLayout
+            android:id="@+id/bottomNav"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:background="@drawable/rounded_bottom_nav"
+            android:padding="4dp">
+
+            <!-- History (PNG) -->
+            <LinearLayout
+                android:id="@+id/tabHistory"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/bottom_nav_item_inactive_ripple"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_history" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="History"
+                    android:textSize="10sp"
+                    android:textColor="#555555"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <!-- Home (PNG) -->
+            <LinearLayout
+                android:id="@+id/tabHome"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/bottom_nav_item_inactive_ripple"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_home" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Home"
+                    android:textSize="10sp"
+                    android:textColor="#555555"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <!-- Feedback (АКТИВНА: только текст) -->
+            <LinearLayout
+                android:id="@+id/tabFeedback"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/bottom_nav_item_active_ripple"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_feedback"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Feedback"
+                    android:textSize="20sp"
+                    android:textColor="#025AE7"
+                    android:textStyle="bold"
+                    android:gravity="center" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

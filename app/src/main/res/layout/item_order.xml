@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="170dp"
+    android:orientation="vertical"
+    android:background="@drawable/main_card_background"
+    android:layout_marginTop="8dp"
+    android:layout_marginLeft="25dp"
+    android:layout_marginRight="25dp"
+    android:animateLayoutChanges="true">
+
+    <!-- ВЕРХНЯЯ ЧАСТЬ ОСТРОВА (как на главном) -->
+    <LinearLayout
+        android:id="@+id/orderHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <!-- Левая часть: компания, маршрут, время, стоимость -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <!-- Компания -->
+            <TextView
+                android:id="@+id/orderCompanyText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Компания"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#000000" />
+
+            <!-- Маршрут -->
+            <TextView
+                android:id="@+id/orderRouteText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Маршрут"
+                android:textSize="14sp"
+                android:textColor="#555555"
+                android:layout_marginTop="2dp" />
+
+            <!-- Время в пути -->
+            <TextView
+                android:id="@+id/orderTimeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Время в пути:"
+                android:layout_marginTop="4dp"
+                android:textColor="#000000" />
+
+            <!-- Стоимость -->
+            <TextView
+                android:id="@+id/orderPriceText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Стоимость:"
+                android:layout_marginTop="4dp"
+                android:textColor="#000000" />
+
+            <!-- Статус — оставляем, но по умолчанию скрываем, чтобы не было лишних надписей -->
+            <TextView
+                android:id="@+id/orderStatusText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="12sp"
+                android:textColor="#555555"
+                android:layout_marginTop="4dp"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <!-- Правая часть: тип тарифа сверху + "Задать вопрос" снизу -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="end"
+            android:paddingRight="8dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp">
+
+            <!-- Тип тарифа (кратко) вверху справа -->
+            <TextView
+                android:id="@+id/orderTariffTypeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Тип тарифа"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#000000" />
+
+            <!-- Заполнитель -->
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <!-- Кнопка "Задать вопрос" (как на главном) -->
+            <Button
+                android:id="@+id/askButton"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:minWidth="154dp"
+                android:text="Задать вопрос"
+                android:textSize="16sp"
+                android:textColor="#101010"
+                android:background="@drawable/main_button_background"
+                app:backgroundTint="@null" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- НИЖНЯЯ ЧАСТЬ ОСТРОВА (РАСКРЫВАЕТСЯ) -->
+    <LinearLayout
+        android:id="@+id/orderActionsContainerHistory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="16dp"
+        android:visibility="gone">
+
+        <!-- Перейти на сайт (широкая синяя) -->
+        <Button
+            android:id="@+id/openSiteButtonHistory"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="Перейти на сайт"
+            android:textSize="18sp"
+            android:textColor="#101010"
+            android:background="@drawable/main_button_background"
+            app:backgroundTint="@null" />
+
+        <!-- В заказах (широкая белая с голубой обводкой) -->
+        <Button
+            android:id="@+id/inOrdersButtonHistory"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="8dp"
+            android:text="В заказах"
+            android:textSize="18sp"
+            android:textColor="#101010"
+            android:background="@drawable/main_button_white_outline"
+            app:backgroundTint="@null" />
+    </LinearLayout>
+
+</LinearLayout>

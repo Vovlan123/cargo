@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1067744344844",
+    "project_id": "delivio-ee9dd",
+    "storage_bucket": "delivio-ee9dd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1067744344844:android:1d3cdac80c7576b292e729",
+        "android_client_info": {
+          "package_name": "com.vovlan.delivio"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBLPk0MpKkPAQN9zSdW01sMiy-ln11M0OI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

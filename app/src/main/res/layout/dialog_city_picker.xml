@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="0dp"
+    android:background="@android:color/transparent">
+
+    <!-- Белая карточка с закруглёнными краями внутри диалога -->
+    <LinearLayout
+        android:id="@+id/cardContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="@drawable/new_order_card_background">
+
+        <!-- Строка поиска внутри выпадающего списка -->
+        <EditText
+            android:id="@+id/searchCityInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Поиск города"
+            android:background="@drawable/rounded_input_background"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:textColor="#000000"
+            android:textColorHint="#777777"
+            android:inputType="textCapWords" />
+
+        <!-- Список городов -->
+        <ListView
+            android:id="@+id/cityListView"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_marginTop="8dp"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="0dp"
+            android:listSelector="@android:color/transparent"
+            android:cacheColorHint="@android:color/transparent"
+            android:overScrollMode="never" />
+    </LinearLayout>
+
+</LinearLayout>

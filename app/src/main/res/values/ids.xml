@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="orderActionsContainer" type="id" />
+    <item name="completeOrderButton" type="id" />
+    <item name="inOrdersButton" type="id" />
+</resources>

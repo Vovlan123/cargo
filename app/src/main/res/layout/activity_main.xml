@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F5F7FB"
+    android:fitsSystemWindows="true"
+    android:paddingTop="16dp"
+    android:animateLayoutChanges="true">
+
+    <!-- Слово 'Заказы' почти у самого верха -->
+    <TextView
+        android:id="@+id/titleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="26dp"
+        android:layout_marginTop="0dp"
+        android:text="Заказы"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:textColor="#000000" />
+
+    <!-- Голубая линия под словом 'Заказы' -->
+    <View
+        android:id="@+id/headerLine"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:background="#6ED1FF" />
+
+    <!-- ОСТРОВ последнего заказа -->
+    <LinearLayout
+        android:id="@+id/lastOrderCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="170dp"
+        android:orientation="vertical"
+        android:background="@drawable/main_card_background"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp">
+
+        <!-- ВЕРХНЯЯ ЧАСТЬ ОСТРОВА (как было) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <!-- Левая часть: компания, тип груза, время, стоимость -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <!-- Компания -->
+                <TextView
+                    android:id="@+id/lastOrderCompany"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Пока нет заказов"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#000000" />
+
+                <!-- Тип груза -->
+                <TextView
+                    android:id="@+id/lastOrderCargoType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="14sp"
+                    android:textColor="#555555"
+                    android:layout_marginTop="2dp" />
+
+                <!-- Время в пути -->
+                <TextView
+                    android:id="@+id/lastOrderTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:layout_marginTop="4dp"
+                    android:textColor="#000000" />
+
+                <!-- Стоимость -->
+                <TextView
+                    android:id="@+id/lastOrderPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:layout_marginTop="4dp"
+                    android:textColor="#000000" />
+            </LinearLayout>
+
+            <!-- Правая часть: тип тарифа вверху справа и кнопка внизу справа -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="end"
+                android:paddingRight="8dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp">
+
+                <!-- Тип тарифа в ВЕРХУ справа -->
+                <TextView
+                    android:id="@+id/lastOrderTariffType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="#000000" />
+
+                <!-- Пустой элемент, который забирает всё свободное пространство -->
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <!-- Кнопка 'Задать вопрос' ВНИЗУ справа -->
+                <Button
+                    android:id="@+id/lastOrderAskButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="44dp"
+                    android:minWidth="154dp"
+                    android:text="Задать вопрос"
+                    android:textSize="16sp"
+                    android:textColor="#101010"
+                    android:background="@drawable/main_button_background_ripple"
+                    app:backgroundTint="@null"
+                    android:visibility="gone" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- НИЖНЯЯ ЧАСТЬ ОСТРОВА (РАСКРЫВАЕТСЯ) -->
+        <LinearLayout
+            android:id="@+id/orderActionsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="16dp"
+            android:visibility="gone">
+
+            <!-- Завершить заказ (маленькая синяя кнопка) -->
+            <Button
+                android:id="@+id/completeOrderButton"
+                android:layout_width="154dp"
+                android:layout_height="44dp"
+                android:text="Завершить заказ"
+                android:textSize="16sp"
+                android:textColor="#101010"
+                android:background="@drawable/main_button_background_ripple"
+                app:backgroundTint="@null" />
+
+            <!-- Перейти на сайт (широкая синяя) -->
+            <Button
+                android:id="@+id/openSiteButton"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="8dp"
+                android:text="Перейти на сайт"
+                android:textSize="18sp"
+                android:textColor="#101010"
+                android:background="@drawable/main_button_background_ripple"
+                app:backgroundTint="@null" />
+
+            <!-- В заказах (широкая белая с голубой обводкой) -->
+            <Button
+                android:id="@+id/inOrdersButton"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="8dp"
+                android:text="В заказах"
+                android:textSize="18sp"
+                android:textColor="#101010"
+                android:background="@drawable/main_button_white_outline_ripple"
+                app:backgroundTint="@null" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Кнопка 'Посмотреть все' – БЕЛАЯ с чёрным текстом -->
+    <Button
+        android:id="@+id/showAllButton"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
+        android:text="Посмотреть все"
+        android:textColor="#000000"
+        android:textSize="16sp"
+        android:background="@drawable/main_button_white_outline_ripple"
+        app:backgroundTint="@null" />
+
+    <!-- Заполнитель, чтобы 'Новый заказ' и панель были внизу -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <!-- Кнопка 'Новый заказ' – голубая таблетка -->
+    <Button
+        android:id="@+id/newOrderButton"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
+        android:layout_marginBottom="8dp"
+        android:text="Новый заказ"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        android:background="@drawable/main_button_background_ripple"
+        app:backgroundTint="@null" />
+
+    <!-- НИЖНЯЯ ПАНЕЛЬ (главная страница) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center">
+
+        <LinearLayout
+            android:id="@+id/bottomNav"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:background="@drawable/rounded_bottom_nav"
+            android:padding="4dp">
+
+            <!-- History -->
+            <LinearLayout
+                android:id="@+id/tabHistory"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/bottom_nav_item_inactive_ripple"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_history" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="History"
+                    android:textSize="10sp"
+                    android:textColor="#555555"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <!-- Home (активна) -->
+            <LinearLayout
+                android:id="@+id/tabHome"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/bottom_nav_item_active_ripple"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_home"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Home"
+                    android:textSize="20sp"
+                    android:textColor="#025AE7"
+                    android:textStyle="bold"
+                    android:gravity="center" />
+            </LinearLayout>
+
+            <!-- Feedback -->
+            <LinearLayout
+                android:id="@+id/tabFeedback"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/bottom_nav_item_inactive_ripple"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_feedback" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Feedback"
+                    android:textSize="10sp"
+                    android:textColor="#555555"
+                    android:visibility="gone" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

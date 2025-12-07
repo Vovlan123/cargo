@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- здесь можно перечислить СКОЛЬКО УГОДНО городов России -->
+    <string-array name="russian_cities">
+        <item>Казань</item>
+        <item>Санкт-Петербург</item>
+        <item>Новосибирск</item>
+        <item>Екатеринбург</item>
+        <item>Нижний Новгород</item>
+        <item>Краснодар</item>
+        <item>Ростов-на-Дону</item>
+        <item>Самара</item>
+        <item>Уфа</item>
+        <item>Челябинск</item>
+        <item>Волгоград</item>
+        <item>Пермь</item>
+        <item>Воронеж</item>
+        <item>Омск</item>
+        <!-- дальше ДОПОЛНЯЕШЬ САМ сколько нужно городов -->
+    </string-array>
+
+</resources>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/ripple_on_blue">
+
+    <!-- здесь используется твой существующий фон -->
+    <item android:drawable="@drawable/feedback_send_button_background" />
+
+</ripple>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Голубой основной цвет -->
+    <color name="purple_200">#66AEEF</color>
+    <color name="purple_500">#00AEEF</color>
+    <color name="purple_700">#008FC2</color>
+
+    <!-- Можно тоже сделать голубым/серым -->
+    <color name="teal_200">#00AEEF</color>
+    <color name="teal_700">#008FC2</color>
+
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="ripple_dark">#20000000</color>        <!-- тёмный полупрозрачный -->
+    <color name="ripple_on_blue">#40FFFFFF</color>    <!-- светлый поверх синего -->
+</resources>
