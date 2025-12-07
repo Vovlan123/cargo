@@ -45,10 +45,12 @@ class FeedbackActivity : AppCompatActivity() {
         // навигация
         tabHistory.setOnClickListener {
             startActivity(Intent(this, HistoryActivity::class.java))
+            overridePendingTransition(0, 0) // отключаем анимацию
             finish()
         }
         tabHome.setOnClickListener {
             startActivity(Intent(this, MainActivity::class.java))
+            overridePendingTransition(0, 0) // отключаем анимацию
             finish()
         }
         tabFeedback.setOnClickListener {

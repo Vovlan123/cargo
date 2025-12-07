@@ -40,6 +40,9 @@ class MainActivity : AppCompatActivity() {
     // Флаг: развернут ли сейчас остров
     private var isOrderExpanded = false
 
+    // Флаг: чтобы избежать двойного открытия экрана "Новый заказ"
+    private var isNewOrderOpening = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -71,7 +74,6 @@ class MainActivity : AppCompatActivity() {
         // Обработка аппаратной кнопки "Назад" по новому API
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                // Ведём себя как ранее в onBackPressed()
                 noActivityTransition()
                 finish()
             }
@@ -82,8 +84,13 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, AllOrdersActivity::class.java))
         }
 
-        // Кнопка "Новый заказ"
+        // Кнопка "Новый заказ" (фикс двойных нажатий)
         newOrderButton.setOnClickListener {
+            if (isNewOrderOpening) {
+                // Если уже открываем "Новый заказ" — игнорируем повторный клик
+                return@setOnClickListener
+            }
+            isNewOrderOpening = true
             startActivity(Intent(this, NewOrderActivity::class.java))
         }
 
@@ -179,6 +186,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+
+        // Как только MainActivity снова становится активной,
+        // разрешаем снова открывать "Новый заказ"
+        isNewOrderOpening = false
+
         updateLastOrder()
         collapseOrderDetails()
     }
