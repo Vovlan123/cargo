@@ -56,3 +56,20 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }
+android {
+    // твоя существующая конфигурация
+}
+
+android.applicationVariants.all {
+    outputs.all {
+        // "this" здесь - BaseVariantOutput
+        val output = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
+        val buildTypeName = buildType.name // debug / release
+
+        output.outputFileName = when (buildTypeName) {
+            "release" -> "cargo-release.apk"
+            "debug" -> "cargo-debug.apk"
+            else -> "cargo-$buildTypeName.apk"
+        }
+    }
+}
