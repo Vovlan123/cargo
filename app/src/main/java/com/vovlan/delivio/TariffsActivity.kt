@@ -43,8 +43,8 @@ class TariffsActivity : AppCompatActivity() {
     private lateinit var tabFeedback: LinearLayout
 
     // Параметры запроса
-    private var fromCity: String = ""   // НОВОЕ: город отправления
-    private var city: String = ""       // город назначения (как было)
+    private var fromCity: String = ""
+    private var city: String = ""
     private var weightKg: Double = 0.0
 
     // Тарифы с сервера
@@ -55,8 +55,8 @@ class TariffsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tariffs)
 
-        // Читаем параметры из Intent (НОВЫЙ fromCity + старые city, weightKg)
-        fromCity = intent.getStringExtra("fromCity") ?: "Москва" // запасной вариант
+        // Читаем параметры из Intent
+        fromCity = intent.getStringExtra("fromCity") ?: "Москва"
         city = intent.getStringExtra("city") ?: ""
         weightKg = intent.getDoubleExtra("weightKg", 0.0)
 
@@ -78,11 +78,11 @@ class TariffsActivity : AppCompatActivity() {
         tabHome = findViewById(R.id.tabHome)
         tabFeedback = findViewById(R.id.tabFeedback)
 
-        // НОВОЕ: показываем маршрут полностью
+        // Маршрут и вес
         cityText.text = "$fromCity → $city"
         weightText.text = "Вес: $weightKg кг"
 
-        // Кнопка "Изменить данные" — возвращаем оба города и вес в NewOrderActivity
+        // Кнопка "Изменить данные"
         changeDataButton.setOnClickListener {
             val intent = Intent(this, NewOrderActivity::class.java)
             intent.putExtra("fromCity", fromCity)
@@ -179,7 +179,6 @@ class TariffsActivity : AppCompatActivity() {
     private fun loadTariffsFromServer() {
         val url = "$BASE_URL/api/tariffs"
 
-        // ВАЖНО: здесь пока НЕ МЕНЯЕМ формат, как и раньше
         val requestDto = TariffsRequestDto(
             city = city,
             weight = weightKg,
@@ -282,13 +281,8 @@ class TariffsActivity : AppCompatActivity() {
 
         val list = when (currentFilter) {
             FilterStrategy.NONE -> originalTariffs
-
-            FilterStrategy.CHEAPEST ->
-                originalTariffs.sortedBy { it.price }
-
-            FilterStrategy.FASTEST ->
-                originalTariffs.sortedBy { it.days }
-
+            FilterStrategy.CHEAPEST -> originalTariffs.sortedBy { it.price }
+            FilterStrategy.FASTEST -> originalTariffs.sortedBy { it.days }
             FilterStrategy.BALANCED -> {
                 val maxPrice = originalTariffs.maxOf { it.price }
                 val maxDays = originalTariffs.maxOf { it.days }
@@ -296,13 +290,10 @@ class TariffsActivity : AppCompatActivity() {
                     (it.price / maxPrice) + (it.days.toDouble() / maxDays)
                 }
             }
-
             FilterStrategy.TYPE1 ->
                 originalTariffs.filter { it.tariffType == "Тип тарифа 1" }
-
             FilterStrategy.TYPE2 ->
                 originalTariffs.filter { it.tariffType == "Тип тарифа 2" }
-
             FilterStrategy.TYPE3 ->
                 originalTariffs.filter { it.tariffType == "Тип тарифа 3" }
         }
@@ -371,7 +362,7 @@ class TariffsActivity : AppCompatActivity() {
                     if (isExpanded) View.VISIBLE else View.GONE
             }
 
-            // НОВОЕ: "Задать вопрос" с полным маршрутом
+            // "Задать вопрос"
             askButton.setOnClickListener {
                 val message = "Вопрос по тарифу:\n" +
                         "${tariff.company}, ${tariff.tariffType}\n" +
@@ -383,8 +374,56 @@ class TariffsActivity : AppCompatActivity() {
                 startActivity(intent)
             }
 
-            // "Выбрать тариф" -> создаём заказ и идём на главную
+            // "Выбрать тариф" -> сохраняем в БД, затем в память и идём на главную
             selectTariffButton.setOnClickListener {
+                // 1. Размер по весу
+                val size = getSizeByWeight(weightKg)
+
+                // 2. Нормализуем тип доставки под CHECK в БД
+                val normalizedDeliveryType = when {
+                    tariff.tariffType.contains("экспресс", ignoreCase = true) ->
+                        "экспресс лайт"
+                    tariff.tariffType.contains("эконом", ignoreCase = true) ||
+                            tariff.tariffType.contains("стандарт", ignoreCase = true) ->
+                        "посылочка (Эконом)"
+                    tariff.tariffType.contains("ems", ignoreCase = true) ->
+                        "EMS отправление"
+                    else ->
+                        "посылочка (Эконом)"
+                }
+
+                // 3. Сохраняем заказ в SQLite
+                val dbHelper = OrdersDbHelper(this)
+                val dbId = try {
+                    dbHelper.insertOrder(
+                        companyName = tariff.company,
+                        deliveryType = normalizedDeliveryType,
+                        weightKg = weightKg,
+                        size = size,
+                        townFrom = fromCity,
+                        townTo = city,
+                        priceRub = tariff.price.toInt(),
+                        timeDays = tariff.days
+                    )
+                } catch (e: Exception) {
+                    Toast.makeText(
+                        this,
+                        "Ошибка сохранения заказа: ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    -1L
+                }
+
+                if (dbId <= 0L) {
+                    Toast.makeText(
+                        this,
+                        "Не удалось сохранить заказ в базу данных",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return@setOnClickListener
+                }
+
+                // 4. Добавляем заказ в память
                 val order = Order(
                     city = city,
                     weightKg = weightKg,
@@ -392,6 +431,8 @@ class TariffsActivity : AppCompatActivity() {
                     isFinished = false
                 )
                 DataRepository.orders.add(0, order)
+
+                // 5. Сообщаем пользователю и переходим на главную
                 Toast.makeText(
                     this,
                     "Тариф добавлен в заказы",
@@ -400,6 +441,7 @@ class TariffsActivity : AppCompatActivity() {
 
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
+                // overridePendingTransition(0, 0) // если нужно без анимации
                 finish()
             }
 
@@ -417,5 +459,16 @@ class TariffsActivity : AppCompatActivity() {
 
             tariffsContainer.addView(itemView)
         }
+    }
+
+    // Простейший маппер размера по весу.
+    // БД не проверяет это поле, поэтому можно изменить логику как нужно.
+    private fun getSizeByWeight(weightKg: Double): String = when {
+        weightKg <= 0.5 -> "XS"
+        weightKg <= 2.0 -> "S"
+        weightKg <= 5.0 -> "M"
+        weightKg <= 10.0 -> "L"
+        weightKg <= 20.0 -> "XL"
+        else -> "XXL"
     }
 }
