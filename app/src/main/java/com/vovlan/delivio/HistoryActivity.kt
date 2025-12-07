@@ -61,7 +61,16 @@ class HistoryActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        // Загружаем заказы из БД, чтобы статус завершённости был актуальным
+        loadOrdersFromDb()
         showOrders()
+    }
+
+    private fun loadOrdersFromDb() {
+        val dbHelper = OrdersDbHelper(this)
+        val ordersFromDb = dbHelper.getAllOrders()
+        DataRepository.orders.clear()
+        DataRepository.orders.addAll(ordersFromDb)
     }
 
     private fun showFilterDialog() {
@@ -94,7 +103,7 @@ class HistoryActivity : AppCompatActivity() {
             .show()
     }
 
-    // Меняем только описание для доступности, текст под PNG не рисуем
+    // Меняем только описание для доступности
     private fun updateFilterButtonText() {
         val description = when (currentFilter) {
             FilterStrategy.NONE -> "Фильтр"
@@ -108,38 +117,37 @@ class HistoryActivity : AppCompatActivity() {
         filterButton.contentDescription = description
     }
 
-    private fun getOrdersForCurrentFilter(): List<Pair<Int, Order>> {
+    private fun getOrdersForCurrentFilter(): List<Order> {
         val finished = DataRepository.orders
-            .mapIndexed { index, order -> index to order }
-            .filter { it.second.isFinished }
+            .filter { it.isFinished }
 
         return when (currentFilter) {
             FilterStrategy.NONE -> finished
 
             FilterStrategy.CHEAPEST ->
-                finished.sortedBy { it.second.tariff.price }
+                finished.sortedBy { it.tariff.price }
 
             FilterStrategy.FASTEST ->
-                finished.sortedBy { it.second.tariff.days }
+                finished.sortedBy { it.tariff.days }
 
             FilterStrategy.BALANCED -> {
                 if (finished.isEmpty()) return finished
-                val maxPrice = finished.maxOf { it.second.tariff.price }
-                val maxDays = finished.maxOf { it.second.tariff.days }
+                val maxPrice = finished.maxOf { it.tariff.price }
+                val maxDays = finished.maxOf { it.tariff.days }
                 finished.sortedBy {
-                    (it.second.tariff.price / maxPrice) +
-                            (it.second.tariff.days.toDouble() / maxDays)
+                    (it.tariff.price / maxPrice) +
+                            (it.tariff.days.toDouble() / maxDays)
                 }
             }
 
             FilterStrategy.TYPE1 ->
-                finished.filter { it.second.tariff.tariffType == "Тип тарифа 1" }
+                finished.filter { it.tariff.tariffType == "Тип тарифа 1" }
 
             FilterStrategy.TYPE2 ->
-                finished.filter { it.second.tariff.tariffType == "Тип тарифа 2" }
+                finished.filter { it.tariff.tariffType == "Тип тарифа 2" }
 
             FilterStrategy.TYPE3 ->
-                finished.filter { it.second.tariff.tariffType == "Тип тарифа 3" }
+                finished.filter { it.tariff.tariffType == "Тип тарифа 3" }
         }
     }
 
@@ -186,7 +194,7 @@ class HistoryActivity : AppCompatActivity() {
             return
         }
 
-        for ((_, order) in list) {
+        for (order in list) {
             val itemView = inflater.inflate(R.layout.item_order, ordersContainer, false)
 
             val companyText: TextView = itemView.findViewById(R.id.orderCompanyText)

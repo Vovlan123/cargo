@@ -132,7 +132,7 @@ class OrdersDbHelper(context: Context) : SQLiteOpenHelper(
                     days = days,
                     isPriceRestored = false,
                     isTimeRestored = false,
-                    sourceUrl = ""   // не null, а пустая строка
+                    sourceUrl = ""
                 )
 
                 val order = Order(
@@ -147,5 +147,56 @@ class OrdersDbHelper(context: Context) : SQLiteOpenHelper(
         }
 
         return result
+    }
+
+    /**
+     * Пометить последний (по времени) заказ как завершённый.
+     * Используется на главном экране при "Завершить заказ".
+     */
+    fun markMostRecentOrderCompleted() {
+        val db = writableDatabase
+        db.execSQL(
+            """
+            UPDATE $TABLE_NAME
+            SET $COL_IS_COMPLETED = 1
+            WHERE $COL_ID = (
+                SELECT $COL_ID
+                FROM $TABLE_NAME
+                ORDER BY $COL_CREATED_AT DESC
+                LIMIT 1
+            )
+            """.trimIndent()
+        )
+    }
+
+    /**
+     * Пометить КОНКРЕТНЫЙ заказ завершённым по его полям.
+     * Используется в "Все заказы" при нажатии на "Завершить".
+     */
+    fun markOrderCompleted(order: Order) {
+        val db = writableDatabase
+
+        val company = order.tariff.company
+        val deliveryType = order.tariff.tariffType
+        val townTo = order.city
+        val weightKg = order.weightKg
+
+        db.execSQL(
+            """
+            UPDATE $TABLE_NAME
+            SET $COL_IS_COMPLETED = 1
+            WHERE $COL_ID IN (
+                SELECT $COL_ID FROM $TABLE_NAME
+                WHERE $COL_COMPANY = ?
+                  AND $COL_DELIVERY_TYPE = ?
+                  AND $COL_TOWN_TO = ?
+                  AND $COL_WEIGHT = ?
+                  AND $COL_IS_COMPLETED = 0
+                ORDER BY $COL_CREATED_AT DESC
+                LIMIT 1
+            )
+            """.trimIndent(),
+            arrayOf<Any>(company, deliveryType, townTo, weightKg)
+        )
     }
 }

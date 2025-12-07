@@ -65,7 +65,7 @@
                 android:layout_marginTop="4dp"
                 android:textColor="#000000" />
 
-            <!-- Статус — оставляем, но по умолчанию скрываем, чтобы не было лишних надписей -->
+            <!-- Статус — оставляем, но по умолчанию скрываем -->
             <TextView
                 android:id="@+id/orderStatusText"
                 android:layout_width="wrap_content"
@@ -150,6 +150,19 @@
             android:textColor="#101010"
             android:background="@drawable/main_button_white_outline"
             app:backgroundTint="@null" />
+
+        <!-- ЗАВЕРШИТЬ ЗАКАЗ (третья кнопка) -->
+        <Button
+            android:id="@+id/completeOrderButton"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="8dp"
+            android:text="Завершить заказ"
+            android:textSize="18sp"
+            android:textColor="#101010"
+            android:background="@drawable/main_button_background"
+            app:backgroundTint="@null" />
+
     </LinearLayout>
 
 </LinearLayout>

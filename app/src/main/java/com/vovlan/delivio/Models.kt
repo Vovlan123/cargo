@@ -1,8 +1,7 @@
 package com.vovlan.delivio
 
 import java.io.Serializable
-
-// Один тариф доставки. Serializable — чтобы передавать через Intent.
+// Модель тарифа (как приходит с бэка и хранится в заказе)
 data class Tariff(
     val company: String,
     val cargoType: String,
@@ -12,30 +11,28 @@ data class Tariff(
     val isPriceRestored: Boolean,
     val isTimeRestored: Boolean,
     val sourceUrl: String
-) : Serializable
+) : Serializable   // ВАЖНО: теперь Tariff реализует Serializable
 
-// Заказ = выбранный тариф + город + вес
+// Модель заказа внутри приложения
 data class Order(
     val city: String,
     val weightKg: Double,
     val tariff: Tariff,
-    var isFinished: Boolean = false,
-    val createdAt: Long = System.currentTimeMillis()
+    var isFinished: Boolean
 )
 
-// Простое хранилище заказов в памяти приложения
-object DataRepository {
-    val orders: MutableList<Order> = mutableListOf()
+// Стратегии сортировки/фильтрации (как у тебя уже использовалось)
+enum class FilterStrategy {
+    NONE,
+    CHEAPEST,
+    FASTEST,
+    BALANCED,
+    TYPE1,
+    TYPE2,
+    TYPE3
 }
 
-
-// Стратегии сортировки / фильтрации
-enum class FilterStrategy {
-    NONE,        // без фильтра
-    CHEAPEST,    // самая дешёвая
-    FASTEST,     // самая быстрая
-    BALANCED,    // баланс цена/срок
-    TYPE1,       // тип тарифа 1
-    TYPE2,       // тип тарифа 2
-    TYPE3        // тип тарифа 3
+// Общий репозиторий заказов в памяти
+object DataRepository {
+    val orders: MutableList<Order> = mutableListOf()
 }

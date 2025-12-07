@@ -95,8 +95,9 @@ class MainActivity : AppCompatActivity() {
 
         // Клик по карточке последнего заказа -> разворачиваем/сворачиваем
         lastOrderCard.setOnClickListener {
-            if (DataRepository.orders.isEmpty()) {
-                Toast.makeText(this, "Пока нет заказов", Toast.LENGTH_SHORT).show()
+            val hasActiveOrder = DataRepository.orders.any { !it.isFinished }
+            if (!hasActiveOrder) {
+                Toast.makeText(this, "Пока нет активных заказов", Toast.LENGTH_SHORT).show()
             } else {
                 toggleOrderExpanded()
             }
@@ -104,16 +105,16 @@ class MainActivity : AppCompatActivity() {
 
         // Кнопка "Задать вопрос"
         lastOrderAskButton.setOnClickListener {
-            if (DataRepository.orders.isEmpty()) {
-                Toast.makeText(this, "Пока нет заказов", Toast.LENGTH_SHORT).show()
+            val activeOrder = DataRepository.orders.firstOrNull { !it.isFinished }
+            if (activeOrder == null) {
+                Toast.makeText(this, "Пока нет активных заказов", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            val order = DataRepository.orders.first()
-            val tariff = order.tariff
+            val tariff = activeOrder.tariff
             val message = "Вопрос по заказу:\n" +
                     "${tariff.company}, ${tariff.tariffType}\n" +
                     "Тип груза: ${tariff.cargoType}\n" +
-                    "Маршрут: Москва → ${order.city}, вес ${order.weightKg} кг\n" +
+                    "Маршрут: Москва → ${activeOrder.city}, вес ${activeOrder.weightKg} кг\n" +
                     "Цена: ${tariff.price} ₽, срок: ${tariff.days} дн."
 
             val intent = Intent(this, FeedbackActivity::class.java)
@@ -123,35 +124,50 @@ class MainActivity : AppCompatActivity() {
 
         // Кнопка "Завершить заказ"
         completeOrderButton.setOnClickListener {
-            if (DataRepository.orders.isEmpty()) {
-                Toast.makeText(this, "Пока нет заказов", Toast.LENGTH_SHORT).show()
+            // Ищем первый НЕЗАВЕРШЁННЫЙ заказ
+            val activeOrder = DataRepository.orders.firstOrNull { !it.isFinished }
+
+            if (activeOrder == null) {
+                Toast.makeText(this, "Пока нет активных заказов", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            val order = DataRepository.orders.first()
-
-            if (!order.isFinished) {
-                order.isFinished = true
+            // Помечаем как завершённый в памяти
+            if (!activeOrder.isFinished) {
+                activeOrder.isFinished = true
                 Toast.makeText(this, "Заказ перенесён в историю", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(this, "Этот заказ уже завершён", Toast.LENGTH_SHORT).show()
             }
 
-            // Сворачиваем карточку
-            collapseOrderDetails()
+            // Обновляем статус в БД (последний созданный заказ)
+            try {
+                val dbHelper = OrdersDbHelper(this)
+                dbHelper.markMostRecentOrderCompleted()
+            } catch (e: Exception) {
+                Toast.makeText(
+                    this,
+                    "Ошибка при обновлении заказа в БД: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
 
-            // Открываем экран истории
+            // Сворачиваем карточку и обновляем главный экран
+            collapseOrderDetails()
+            updateLastOrder()
+
+            // Переходим в историю
             startActivity(Intent(this, HistoryActivity::class.java))
         }
 
         // Кнопка "Перейти на сайт"
         openSiteButton.setOnClickListener {
-            if (DataRepository.orders.isEmpty()) {
-                Toast.makeText(this, "Пока нет заказов", Toast.LENGTH_SHORT).show()
+            val activeOrder = DataRepository.orders.firstOrNull { !it.isFinished }
+            if (activeOrder == null) {
+                Toast.makeText(this, "Пока нет активных заказов", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            val order = DataRepository.orders.first()
-            val companyName = order.tariff.company
+            val companyName = activeOrder.tariff.company
             val query = Uri.encode(companyName)
             val url = "https://www.google.com/search?q=$query"
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
@@ -206,8 +222,13 @@ class MainActivity : AppCompatActivity() {
         DataRepository.orders.addAll(ordersFromDb)
     }
 
+    /**
+     * Обновление карточки последнего АКТИВНОГО заказа.
+     */
     private fun updateLastOrder() {
-        if (DataRepository.orders.isEmpty()) {
+        val activeOrder = DataRepository.orders.firstOrNull { !it.isFinished }
+
+        if (activeOrder == null) {
             lastOrderCompany.text = "Пока нет заказов"
             lastOrderCargoType.text = ""
             lastOrderTime.text = ""
@@ -215,8 +236,7 @@ class MainActivity : AppCompatActivity() {
             lastOrderTariffType.text = ""
             lastOrderAskButton.visibility = View.GONE
         } else {
-            val order = DataRepository.orders.first()
-            val tariff = order.tariff
+            val tariff = activeOrder.tariff
             lastOrderCompany.text = tariff.company
             lastOrderCargoType.text = "Тип груза: ${tariff.cargoType}"
             lastOrderTime.text = "Время в пути: ${tariff.days} дн."
