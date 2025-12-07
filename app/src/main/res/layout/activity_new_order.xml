@@ -22,16 +22,32 @@
         android:paddingTop="24dp"
         android:paddingBottom="24dp">
 
-        <!-- Строка выбора города (слово "Город" внутри) -->
+        <!-- ПЕРВАЯ строка выбора города (город ОТКУДА) -->
         <TextView
-            android:id="@+id/cityField"
+            android:id="@+id/fromCityField"
             android:layout_width="match_parent"
             android:layout_height="52dp"
             android:background="@drawable/new_order_city_background"
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
             android:gravity="center_vertical"
-            android:hint="Город"
+            android:hint="Город отправления"
+            android:text=""
+            android:textColor="#000000"
+            android:textColorHint="#676767"
+            android:textSize="16sp" />
+
+        <!-- ВТОРАЯ строка выбора города (город КУДА) -->
+        <TextView
+            android:id="@+id/cityField"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/new_order_city_background"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:gravity="center_vertical"
+            android:hint="Город назначения"
             android:text=""
             android:textColor="#000000"
             android:textColorHint="#676767"

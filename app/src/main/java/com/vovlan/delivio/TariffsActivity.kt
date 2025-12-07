@@ -43,7 +43,8 @@ class TariffsActivity : AppCompatActivity() {
     private lateinit var tabFeedback: LinearLayout
 
     // Параметры запроса
-    private var city: String = ""
+    private var fromCity: String = ""   // НОВОЕ: город отправления
+    private var city: String = ""       // город назначения (как было)
     private var weightKg: Double = 0.0
 
     // Тарифы с сервера
@@ -54,6 +55,8 @@ class TariffsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tariffs)
 
+        // Читаем параметры из Intent (НОВЫЙ fromCity + старые city, weightKg)
+        fromCity = intent.getStringExtra("fromCity") ?: "Москва" // запасной вариант
         city = intent.getStringExtra("city") ?: ""
         weightKg = intent.getDoubleExtra("weightKg", 0.0)
 
@@ -75,11 +78,14 @@ class TariffsActivity : AppCompatActivity() {
         tabHome = findViewById(R.id.tabHome)
         tabFeedback = findViewById(R.id.tabFeedback)
 
-        cityText.text = city
+        // НОВОЕ: показываем маршрут полностью
+        cityText.text = "$fromCity → $city"
         weightText.text = "Вес: $weightKg кг"
 
+        // Кнопка "Изменить данные" — возвращаем оба города и вес в NewOrderActivity
         changeDataButton.setOnClickListener {
             val intent = Intent(this, NewOrderActivity::class.java)
+            intent.putExtra("fromCity", fromCity)
             intent.putExtra("city", city)
             intent.putExtra("weightKg", weightKg)
             startActivity(intent)
@@ -173,6 +179,7 @@ class TariffsActivity : AppCompatActivity() {
     private fun loadTariffsFromServer() {
         val url = "$BASE_URL/api/tariffs"
 
+        // ВАЖНО: здесь пока НЕ МЕНЯЕМ формат, как и раньше
         val requestDto = TariffsRequestDto(
             city = city,
             weight = weightKg,
@@ -308,7 +315,7 @@ class TariffsActivity : AppCompatActivity() {
         }
     }
 
-    // ------- Отрисовка списка тарифов (острова как на главном) -------
+    // ------- Отрисовка списка тарифов -------
 
     private fun showTariffs(tariffs: List<Tariff>) {
         if (tariffs.isEmpty()) {
@@ -357,7 +364,6 @@ class TariffsActivity : AppCompatActivity() {
                 "Данные ОТ ПЕРЕВОЗЧИКА"
             }
 
-            // Состояние "раскрыт/свёрнут" для этого острова
             var isExpanded = false
             itemView.setOnClickListener {
                 isExpanded = !isExpanded
@@ -365,11 +371,11 @@ class TariffsActivity : AppCompatActivity() {
                     if (isExpanded) View.VISIBLE else View.GONE
             }
 
-            // "Задать вопрос" по тарифу -> в поддержку
+            // НОВОЕ: "Задать вопрос" с полным маршрутом
             askButton.setOnClickListener {
                 val message = "Вопрос по тарифу:\n" +
                         "${tariff.company}, ${tariff.tariffType}\n" +
-                        "Маршрут: Москва → $city, вес $weightKg кг\n" +
+                        "Маршрут: $fromCity → $city, вес $weightKg кг\n" +
                         "Цена: ${tariff.price} ₽, срок: ${tariff.days} дн."
 
                 val intent = Intent(this, FeedbackActivity::class.java)
@@ -408,8 +414,6 @@ class TariffsActivity : AppCompatActivity() {
                 val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                 startActivity(browserIntent)
             }
-
-            // Кнопки "В заказах" больше нет
 
             tariffsContainer.addView(itemView)
         }
