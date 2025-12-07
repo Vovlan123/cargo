@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 
 class OrdersDbHelper(context: Context) :
-    SQLiteOpenHelper(context, "zakazi.db", null, 1) {
+    SQLiteOpenHelper(context, "deliveries.db", null, 1) {
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(

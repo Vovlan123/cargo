@@ -18,6 +18,8 @@ import java.io.IOException
 class TariffsActivity : AppCompatActivity() {
 
     private val BASE_URL = "http://127.0.0.1:8000"
+    // Если сервер на ПК, а запускаешь с эмулятора Android Studio,
+    // лучше использовать: private val BASE_URL = "http://10.0.2.2:8000"
 
     private val httpClient = OkHttpClient()
     private val gson = Gson()
@@ -179,11 +181,14 @@ class TariffsActivity : AppCompatActivity() {
     private fun loadTariffsFromServer() {
         val url = "$BASE_URL/api/tariffs"
 
+        // Отправляем и fromCity, и city, и weight, и strategy
         val requestDto = TariffsRequestDto(
+            fromCity = fromCity,
             city = city,
             weight = weightKg,
             strategy = "none"
         )
+
         val jsonBody = gson.toJson(requestDto)
         val mediaType = "application/json; charset=utf-8".toMediaType()
         val requestBody = jsonBody.toRequestBody(mediaType)
@@ -441,7 +446,6 @@ class TariffsActivity : AppCompatActivity() {
 
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
-                // overridePendingTransition(0, 0) // если нужно без анимации
                 finish()
             }
 
@@ -461,8 +465,7 @@ class TariffsActivity : AppCompatActivity() {
         }
     }
 
-    // Простейший маппер размера по весу.
-    // БД не проверяет это поле, поэтому можно изменить логику как нужно.
+    // Маппер размера по весу
     private fun getSizeByWeight(weightKg: Double): String = when {
         weightKg <= 0.5 -> "XS"
         weightKg <= 2.0 -> "S"
