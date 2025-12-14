@@ -29,7 +29,7 @@ class TariffsActivity : AppCompatActivity() {
     private lateinit var contentLayout: View
     private lateinit var emptyLayout: View
 
-    // Элементы контента
+    // Элементы контента (основные)
     private lateinit var cityText: TextView
     private lateinit var weightText: TextView
     private lateinit var avgPriceText: TextView
@@ -39,10 +39,21 @@ class TariffsActivity : AppCompatActivity() {
     private lateinit var changeDataButton: Button
     private lateinit var filterButton: Button
 
-    // Нижняя панель (вкладки)
+    // Элементы emptyLayout (дубликаты)
+    private lateinit var emptyCityText: TextView
+    private lateinit var emptyWeightText: TextView
+    private lateinit var emptyFilterButton: Button
+    private lateinit var emptyChangeDataButton: Button
+
+    // Нижняя панель (вкладки) - основные
     private lateinit var tabHistory: LinearLayout
     private lateinit var tabHome: LinearLayout
     private lateinit var tabFeedback: LinearLayout
+
+    // Нижняя панель (вкладки) - emptyLayout
+    private lateinit var emptyTabHistory: LinearLayout
+    private lateinit var emptyTabHome: LinearLayout
+    private lateinit var emptyTabFeedback: LinearLayout
 
     // Параметры запроса
     private var fromCity: String = ""
@@ -62,11 +73,26 @@ class TariffsActivity : AppCompatActivity() {
         city = intent.getStringExtra("city") ?: ""
         weightKg = intent.getDoubleExtra("weightKg", 0.0)
 
-        // View
+        // Инициализация всех View
+        initViews()
+
+        // Обновляем данные во всех состояниях
+        updateAllDataDisplays()
+
+        // Настраиваем все кнопки
+        setupAllButtons()
+
+        showLoading()
+        loadTariffsFromServer()
+    }
+
+    private fun initViews() {
+        // Основные layouts
         loadingLayout = findViewById(R.id.loadingLayout)
         contentLayout = findViewById(R.id.contentLayout)
         emptyLayout = findViewById(R.id.emptyLayout)
 
+        // Основной контент
         cityText = findViewById(R.id.cityText)
         weightText = findViewById(R.id.weightText)
         avgPriceText = findViewById(R.id.avgPriceText)
@@ -76,44 +102,82 @@ class TariffsActivity : AppCompatActivity() {
         changeDataButton = findViewById(R.id.changeDataButton)
         filterButton = findViewById(R.id.filterButton)
 
+        // Empty layout контент
+        emptyCityText = findViewById(R.id.emptyCityText)
+        emptyWeightText = findViewById(R.id.emptyWeightText)
+        emptyFilterButton = findViewById(R.id.emptyFilterButton)
+        emptyChangeDataButton = findViewById(R.id.emptyChangeDataButton)
+
+        // Основная нижняя панель
         tabHistory = findViewById(R.id.tabHistory)
         tabHome = findViewById(R.id.tabHome)
         tabFeedback = findViewById(R.id.tabFeedback)
 
-        // Маршрут и вес
-        cityText.text = "$fromCity → $city"
-        weightText.text = "Вес: $weightKg кг"
+        // Нижняя панель в emptyLayout
+        emptyTabHistory = findViewById(R.id.emptyTabHistory)
+        emptyTabHome = findViewById(R.id.emptyTabHome)
+        emptyTabFeedback = findViewById(R.id.emptyTabFeedback)
+    }
 
-        // Кнопка "Изменить данные"
-        changeDataButton.setOnClickListener {
-            val intent = Intent(this, NewOrderActivity::class.java)
-            intent.putExtra("fromCity", fromCity)
-            intent.putExtra("city", city)
-            intent.putExtra("weightKg", weightKg)
-            startActivity(intent)
-        }
+    private fun updateAllDataDisplays() {
+        // Обновляем город/вес во всех местах
+        val cityDisplay = "$fromCity → $city"
+        val weightDisplay = "Вес: $weightKg кг"
 
-        // Нижняя панель навигации
-        tabHistory.setOnClickListener {
-            startActivity(Intent(this, HistoryActivity::class.java))
-            finish()
-        }
-        tabHome.setOnClickListener {
-            startActivity(Intent(this, MainActivity::class.java))
-            finish()
-        }
-        tabFeedback.setOnClickListener {
-            startActivity(Intent(this, FeedbackActivity::class.java))
-            finish()
-        }
+        cityText.text = cityDisplay
+        weightText.text = weightDisplay
+        emptyCityText.text = cityDisplay
+        emptyWeightText.text = weightDisplay
+    }
 
-        // Фильтр
-        filterButton.setOnClickListener {
-            showFilterDialog()
-        }
+    private fun setupAllButtons() {
+        // Кнопка "Изменить данные" - везде одинаково
+        changeDataButton.setOnClickListener { goToNewOrder() }
+        emptyChangeDataButton.setOnClickListener { goToNewOrder() }
 
-        showLoading()
-        loadTariffsFromServer()
+        // Фильтр - везде одинаково
+        filterButton.setOnClickListener { showFilterDialog() }
+        emptyFilterButton.setOnClickListener { showFilterDialog() }
+
+        // Навигация - везде одинаково
+        setupNavigationButtons()
+    }
+
+    private fun setupNavigationButtons() {
+        // History
+        tabHistory.setOnClickListener { goToHistory() }
+        emptyTabHistory.setOnClickListener { goToHistory() }
+
+        // Home
+        tabHome.setOnClickListener { goToHome() }
+        emptyTabHome.setOnClickListener { goToHome() }
+
+        // Feedback
+        tabFeedback.setOnClickListener { goToFeedback() }
+        emptyTabFeedback.setOnClickListener { goToFeedback() }
+    }
+
+    private fun goToNewOrder() {
+        val intent = Intent(this, NewOrderActivity::class.java)
+        intent.putExtra("fromCity", fromCity)
+        intent.putExtra("city", city)
+        intent.putExtra("weightKg", weightKg)
+        startActivity(intent)
+    }
+
+    private fun goToHistory() {
+        startActivity(Intent(this, HistoryActivity::class.java))
+        finish()
+    }
+
+    private fun goToHome() {
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
+    }
+
+    private fun goToFeedback() {
+        startActivity(Intent(this, FeedbackActivity::class.java))
+        finish()
     }
 
     private fun showFilterDialog() {
@@ -147,13 +211,13 @@ class TariffsActivity : AppCompatActivity() {
 
     private fun updateStrategyText() {
         val text = when (currentFilter) {
-            FilterStrategy.NONE -> "Стратегия сортировки: без фильтра"
-            FilterStrategy.CHEAPEST -> "Стратегия сортировки: самая дешёвая"
-            FilterStrategy.FASTEST -> "Стратегия сортировки: самая быстрая"
-            FilterStrategy.BALANCED -> "Стратегия сортировки: сбалансированная"
-            FilterStrategy.TYPE1 -> "Стратегия сортировки: тип тарифа 1"
-            FilterStrategy.TYPE2 -> "Стратегия сортировки: тип тарифа 2"
-            FilterStrategy.TYPE3 -> "Стратегия сортировки: тип тарифа 3"
+            FilterStrategy.NONE -> "Фильтр"
+            FilterStrategy.CHEAPEST -> "Самая дешёвая"
+            FilterStrategy.FASTEST -> "Самая быстрая"
+            FilterStrategy.BALANCED -> "Сбалансированная"
+            FilterStrategy.TYPE1 -> "Тип тарифа 1"
+            FilterStrategy.TYPE2 -> "Тип тарифа 2"
+            FilterStrategy.TYPE3 -> "Тип тарифа 3"
         }
         strategyText.text = text
     }
@@ -176,12 +240,10 @@ class TariffsActivity : AppCompatActivity() {
         emptyLayout.visibility = View.VISIBLE
     }
 
-    // ------- Загрузка с сервера -------
-
+    // ------- Загрузка с сервера (без изменений) -------
     private fun loadTariffsFromServer() {
         val url = "$BASE_URL/api/tariffs"
 
-        // ВАЖНО: используем TariffsRequestDto из NetworkModels.kt
         val requestDto = TariffsRequestDto(
             fromCity = fromCity,
             city = city,
@@ -275,8 +337,7 @@ class TariffsActivity : AppCompatActivity() {
         })
     }
 
-    // ------- Фильтрация -------
-
+    // Остальные методы без изменений (applyFilter, showTariffs, getSizeByWeight)
     private fun applyFilter() {
         if (originalTariffs.isEmpty()) {
             showEmpty()
@@ -310,9 +371,8 @@ class TariffsActivity : AppCompatActivity() {
         }
     }
 
-    // ------- Отрисовка списка тарифов -------
-
     private fun showTariffs(tariffs: List<Tariff>) {
+        // ... (код без изменений, как был раньше)
         if (tariffs.isEmpty()) {
             showEmpty()
             return
@@ -366,7 +426,6 @@ class TariffsActivity : AppCompatActivity() {
                     if (isExpanded) View.VISIBLE else View.GONE
             }
 
-            // "Задать вопрос"
             askButton.setOnClickListener {
                 val message = "Вопрос по тарифу:\n" +
                         "${tariff.company}, ${tariff.tariffType}\n" +
@@ -378,7 +437,6 @@ class TariffsActivity : AppCompatActivity() {
                 startActivity(intent)
             }
 
-            // "Выбрать тариф" -> сохраняем в БД, затем в память и идём на главную
             selectTariffButton.setOnClickListener {
                 val size = getSizeByWeight(weightKg)
 
@@ -443,7 +501,6 @@ class TariffsActivity : AppCompatActivity() {
                 finish()
             }
 
-            // "Перейти на сайт"
             openSiteButton.setOnClickListener {
                 val url = if (!tariff.sourceUrl.isNullOrBlank()) {
                     tariff.sourceUrl
